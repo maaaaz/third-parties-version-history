@@ -8,7 +8,7 @@ A collection of version history for common third-party tools
 Third-party tools currently listed here
 ---------------------------------------
 * [Java](./Java)
-* [Adobe Flash](./Adobe Flash)
+* [Adobe Flash](./Adobe%20Flash)
 
 Changelog
 ---------
