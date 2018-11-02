@@ -16,5 +16,5 @@ Changelog
 
 Copyright and license
 ---------------------
-* All trademarks, service marks, trade names and product names appearing on the site are the property of their respective owners
-* The scripts provided here are distributed with the LGPL licence
+* All trademarks, service marks, trade names and product names appearing on this repository are the property of their respective owners
+* Sscripts provided in this repository are distributed with the LGPL licence
