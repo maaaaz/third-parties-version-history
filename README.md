@@ -9,11 +9,14 @@ Third-party tools currently listed here
 ---------------------------------------
 * [Adobe Flash](./Adobe%20Flash)
 * [Adobe Reader](./Adobe%20Reader)
+* [Google Chrome] (./Google%20Chrome)
 * [Java](./Java)
+* [Mozilla Firefox](./Mozilla%20Firefox)
+* [VLC](./VLC)
 
 Changelog
 ---------
-* version 1.1 - 12/28/2018: fixes for Flash and Java, Reader added
+* version 1.1 - 12/28/2018: fixes for Flash and Java ; Reader, Chrome and VLC added
 * version 1.0 - 11/02/2018: initial commit
 
 Copyright and license
