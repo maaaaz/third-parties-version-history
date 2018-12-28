@@ -31,11 +31,11 @@ from lxml.html.soupparser import fromstring
 import requests
 
 # Script version
-VERSION = '1.0'
+VERSION = '1.1'
 
 # Options definition
 parser = argparse.ArgumentParser(description="version: " + VERSION)
-parser.add_argument('-o', '--output-file', help='Output csv file (default ../flash.csv)', default=path.abspath(path.join(os.getcwd(), '../flash.csv')))
+parser.add_argument('-o', '--output-file', help='Output csv file (default ./flash.csv)', default=path.abspath(path.join(os.getcwd(), './flash.csv')))
 
     
 def from_adobe():
@@ -71,6 +71,21 @@ def from_adobe():
                 version_full_2 = version_2_entry.group('version_full_2')
                 yield version_full_2, flash
 
+def from_snapfiles():
+    root = fromstring(requests.get('http://www.snapfiles.com/apphistory/flashplayer_history.html').content)
+    trs = root.findall('.//*[@id="apphistory-container"]/h3')
+    for entry in trs:
+        date = entry.xpath('string(span/text())')
+        release = entry.xpath('string(text())').strip()
+        
+        if release and date:
+            flash = {}
+            format_str = "%b %d, %Y"
+            datetime_obj = datetime.datetime.strptime(date, format_str)
+            flash['date'] = datetime_obj.date().isoformat()
+        
+            yield release, flash
+    
 
 def scrape_and_merge(sources, results):
     for name, source in sources:
@@ -83,7 +98,8 @@ def scrape_and_merge(sources, results):
     
 def scrape(opts):
     results = {}
-    sources = [ ('adobe', from_adobe()) ]
+    sources = [ ('adobe', from_adobe()), 
+                ('snapfiles', from_snapfiles()) ]
     
     scrape_and_merge(sources, results)
     
@@ -98,7 +114,7 @@ def generate_csv(results, options):
             spamwriter = csv.writer(fd_output, delimiter=';', quoting=csv.QUOTE_ALL, lineterminator='\n')
             spamwriter.writerow(keys)
             
-            for version_full in sorted(results.keys(), key=lambda v: int(v.split('.', 2)[0])):
+            for version_full in sorted(results.keys(), key=lambda s: list(map(int, s.split('.')))):
                 output_line = []
                 item = results[version_full]
                 output_line = [version_full, item['date']]

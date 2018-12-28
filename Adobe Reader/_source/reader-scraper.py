@@ -25,6 +25,7 @@ import re
 import csv
 import os
 import argparse
+import datetime
 
 from lxml.html.soupparser import fromstring
 import requests
@@ -34,54 +35,53 @@ VERSION = '1.1'
 
 # Options definition
 parser = argparse.ArgumentParser(description="version: " + VERSION)
-parser.add_argument('-o', '--output-file', help='Output csv file (default ./java.csv)', default=path.abspath(path.join(os.getcwd(), './java.csv')))
+parser.add_argument('-o', '--output-file', help='Output csv file (default ./reader.csv)', default=path.abspath(path.join(os.getcwd(), './reader.csv')))
 
     
-def from_wikipedia():
-    root = fromstring(requests.get('https://en.wikipedia.org/wiki/Java_version_history').content)
-    
-    p_java_until_9 = re.compile('java se (?P<version_major>\d*) update (?P<version_minor>.*)', re.IGNORECASE)
-    p_java_9_plus = re.compile('java se (?P<version_major>\d*?)\.(?P<version_minor>.*)', re.IGNORECASE)
-    
+def from_adobe():
+    root = fromstring(requests.get('https://helpx.adobe.com/acrobat/release-note/release-notes-acrobat-reader.html').content)
     trs = root.findall('.//tbody/tr')
-    for entry in trs:
-        release = entry.xpath('string(td[1]/text())')
-        date = entry.xpath('string(td[2]/text())')
-        
-        java_entry = p_java_until_9.search(release)
-        if java_entry:
-            java = {}
-            version_full = "1.%s.0_%s" % (java_entry.group('version_major').strip(), java_entry.group('version_minor').strip())
-            java['version_major'] = java_entry.group('version_major')
-            java['date'] = date.strip()
-            yield version_full, java
-            
-        java_entry = p_java_9_plus.search(release)
-        if java_entry:
-            java = {}
-            version_full = "1.%s.%s" % (java_entry.group('version_major').strip(), java_entry.group('version_minor').strip().replace('.','_'))
-            java['version_major'] = java_entry.group('version_major')
-            java['date'] = date.strip()
-            yield version_full, java
-            
-def from_oracle():
-    root = fromstring(requests.get('https://java.com/en/download/faq/release_dates.xml').content)
+    p_version = re.compile('(?P<version>\d{2}\.[0-9.]*)', re.IGNORECASE)
     
-    p_java = re.compile('java (?P<version_major>\d*) update (?P<version_minor>\d*)', re.IGNORECASE)
-    
-    trs = root.findall('.//tr')
     for entry in trs:
-        release = entry.xpath('string(td[1]/text())')
-        date = entry.xpath('string(td[2]/text())')
+        release = entry.xpath('string(td[2])')
+        date = entry.xpath('string(td[1])').strip()
         
-        java_entry = p_java.search(release)
-        if java_entry:
-            java = {}
-            version_full = "1.%s.0_%s" % (java_entry.group('version_major').strip(), java_entry.group('version_minor').strip())
-            java['version_major'] = java_entry.group('version_major')
-            java['date'] = date.strip()
-            yield version_full, java
+        version_entry = p_version.search(release)
+        if version_entry and date:
+            release = version_entry.group('version')
+            
+            reader = {}
+            for fmt in ('%b %d, %Y', '%B %d, %Y', '%b. %d, %Y'):
+                try:
+                    datetime_obj = datetime.datetime.strptime(date, fmt)
+                except ValueError:
+                    pass
+                
+            reader['date'] = datetime_obj.date().isoformat()
+        
+            yield release, reader
 
+def from_chocolatey():
+    root = fromstring(requests.get('https://chocolatey.org/packages/adobereader-update').content)
+    trs = root.findall('.//tr')
+    p_version = re.compile('(?P<version>\d{2}\.[0-9.]*)', re.IGNORECASE)
+    
+    for entry in trs:
+        date = entry.xpath('string(td[3])').strip()
+        release = entry.xpath('string(td[1]/a|td[1]/span)')
+        
+        version_entry = p_version.search(release)
+        if version_entry and date:
+            release = version_entry.group('version')
+            
+            reader = {}
+            format_str = "%A, %B %d, %Y"
+            datetime_obj = datetime.datetime.strptime(date, format_str)
+            reader['date'] = datetime_obj.date().isoformat()
+        
+            yield release, reader
+    
 def scrape_and_merge(sources, results):
     for name, source in sources:
         count = 0
@@ -89,12 +89,13 @@ def scrape_and_merge(sources, results):
             if version not in results:
                 results[version] = item
                 count = count + 1
+                
         print("[+] %s entries collected from '%s'" % (count, name))
     
 def scrape(opts):
     results = {}
-    sources = [ ('wikipedia', from_wikipedia()), 
-                ('oracle', from_oracle()) ]
+    sources = [ ('adobe', from_adobe()), 
+                ('chocolatey', from_chocolatey()) ]
     
     scrape_and_merge(sources, results)
     
@@ -102,7 +103,7 @@ def scrape(opts):
 
     
 def generate_csv(results, options):
-    keys = ['version_full', 'version_major', 'date (yyyy-mm-dd)']
+    keys = ['version_full', 'date (yyyy-mm-dd)']
     
     if results:
         with open(options.output_file, mode='w', encoding='utf-8') as fd_output:
@@ -112,7 +113,7 @@ def generate_csv(results, options):
             for version_full in sorted(results.keys(), key=lambda s: list(map(int, s.split('.')))):
                 output_line = []
                 item = results[version_full]
-                output_line = [version_full, item['version_major'], item['date']]
+                output_line = [version_full, item['date']]
                 spamwriter.writerow(output_line) 
     return
     
