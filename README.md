@@ -9,7 +9,7 @@ Third-party tools currently listed here
 ---------------------------------------
 * [Adobe Flash](./Adobe%20Flash)
 * [Adobe Reader](./Adobe%20Reader)
-* [Google Chrome] (./Google%20Chrome)
+* [Google Chrome](./Google%20Chrome)
 * [Java](./Java)
 * [Mozilla Firefox](./Mozilla%20Firefox)
 * [VLC](./VLC)
