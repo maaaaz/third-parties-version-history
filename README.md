@@ -16,8 +16,8 @@ Third-party tools currently listed here
 
 Changelog
 ---------
-* version 1.1 - 12/28/2018: fixes for Flash and Java ; Reader, Chrome and VLC added
-* version 1.0 - 11/02/2018: initial commit
+* version 1.1 - 28/12/2018: fixes for Flash and Java ; Reader, Chrome and VLC added
+* version 1.0 - 02/11/2018: initial commit
 
 Copyright and license
 ---------------------
