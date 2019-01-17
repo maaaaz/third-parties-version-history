@@ -27,6 +27,7 @@ import os
 import argparse
 import datetime
 import locale
+import pprint
 
 from lxml.html.soupparser import fromstring
 import requests

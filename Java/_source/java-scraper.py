@@ -30,7 +30,7 @@ from lxml.html.soupparser import fromstring
 import requests
 
 # Script version
-VERSION = '1.1'
+VERSION = '1.2'
 
 # Options definition
 parser = argparse.ArgumentParser(description="version: " + VERSION)
@@ -109,7 +109,7 @@ def generate_csv(results, options):
             spamwriter = csv.writer(fd_output, delimiter=';', quoting=csv.QUOTE_ALL, lineterminator='\n')
             spamwriter.writerow(keys)
             
-            for version_full in sorted(results.keys(), key=lambda s: list(map(int, s.split('.')))):
+            for version_full in sorted(results.keys(), key=lambda s: list(map(int, s.replace('.0_','.').split('.', 2)))):
                 output_line = []
                 item = results[version_full]
                 output_line = [version_full, item['version_major'], item['date']]
