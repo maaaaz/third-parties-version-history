@@ -35,12 +35,12 @@ VERSION = '1.2'
 
 # Options definition
 parser = argparse.ArgumentParser(description="version: " + VERSION)
-parser.add_argument('-o', '--output-file', help='Output csv file (default ./firefox.csv)', default=path.abspath(path.join(os.getcwd(), './firefox.csv')))
+parser.add_argument('-o', '--output-file', help='Output csv file (default ./horizonview.csv)', default=path.abspath(path.join(os.getcwd(), './horizonview.csv')))
 
 def from_chocolatey():
-    root = fromstring(requests.get('https://chocolatey.org/packages/Firefox').content)
+    root = fromstring(requests.get('https://chocolatey.org/packages/vmware-horizon-client').content)
     trs = root.findall('.//tr')
-    p_version = re.compile('(?P<version>\d{2}\.[0-9.]*)', re.IGNORECASE)
+    p_version = re.compile('(?P<version>\d{1}\.[0-9.]*)', re.IGNORECASE)
     
     for entry in trs:
         date = entry.xpath('string(td[3])').strip()
@@ -50,12 +50,12 @@ def from_chocolatey():
         if version_entry and date:
             release = version_entry.group('version')
             
-            firefox = {}
+            horizonview = {}
             format_str = "%A, %B %d, %Y"
             datetime_obj = datetime.datetime.strptime(date, format_str)
-            firefox['date'] = datetime_obj.date().isoformat()
+            horizonview['date'] = datetime_obj.date().isoformat()
         
-            yield release, firefox
+            yield release, horizonview
     
 def scrape_and_merge(sources, results):
     for name, source in sources:
@@ -74,7 +74,6 @@ def scrape(opts):
     scrape_and_merge(sources, results)
     
     return results
-
     
 def generate_csv(results, options):
     keys = ['version_full', 'date (yyyy-mm-dd)']
@@ -84,7 +83,7 @@ def generate_csv(results, options):
             spamwriter = csv.writer(fd_output, delimiter=';', quoting=csv.QUOTE_ALL, lineterminator='\n')
             spamwriter.writerow(keys)
             
-            for version_full in sorted(results.keys(), key=lambda s: list(map(int, s.split('.')))):
+            for version_full in sorted(results.keys(), key=lambda s: s.split('.')):
                 output_line = []
                 item = results[version_full]
                 output_line = [version_full, item['date']]

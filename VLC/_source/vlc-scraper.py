@@ -33,40 +33,28 @@ from lxml.html.soupparser import fromstring
 import requests
 
 # Script version
-VERSION = '1.1'
+VERSION = '1.2'
 
 # Options definition
 parser = argparse.ArgumentParser(description="version: " + VERSION)
 parser.add_argument('-o', '--output-file', help='Output csv file (default ./vlc.csv)', default=path.abspath(path.join(os.getcwd(), './vlc.csv')))
 
-    
-def from_wikipedia():
-    locale.setlocale(locale.LC_ALL, "fr_FR.utf8")
-    
-    root = fromstring(requests.get('https://fr.wikipedia.org/wiki/VLC_media_player').content)
-    trs = root.findall('.//*[@id="mw-content-text"]/div/table[1]/tbody/tr')
-    p_version = re.compile('(?P<version>\d{1,2}\.[0-9.]*)', re.IGNORECASE)
+def from_digital_digest():
+    root = fromstring(requests.get('http://www.digital-digest.com/software/videolan_history.html').content)
+    trs = root.findall('.//div[@class="softwareDescription"]/ul/li/a')
+    p_version = re.compile('Version (?P<version>[0-9.]*) \((?P<date>(.*))\)', re.IGNORECASE)
     
     for entry in trs:
-        release = entry.xpath('string(td[1])').strip()
-        
-        version_entry = p_version.search(release)
-        if version_entry:
-            release = version_entry.group('version')
+        release_and_date = p_version.match(entry.text_content())
+        if release_and_date:
             vlc = {}
-            # fuzzy search of date
-            for i in [2,3]:
-                date = entry.xpath("string(td[%s])" % i).strip().replace('1er','01')
-                try:
-                    datetime_obj = datetime.datetime.strptime(date, "%d %B %Y")
-                    vlc = {}
-                    vlc['date'] = datetime_obj.date().isoformat()
-                    break
-                except ValueError:
-                    pass
-
+            release = release_and_date.group('version')
+            date = release_and_date.group('date')
+            datetime_obj = datetime.datetime.strptime(date, "%b %d, %Y").date().isoformat()
+            vlc['date'] = datetime_obj
+            
             yield release, vlc
-    
+
 def scrape_and_merge(sources, results):
     for name, source in sources:
         count = 0
@@ -79,7 +67,7 @@ def scrape_and_merge(sources, results):
     
 def scrape(opts):
     results = {}
-    sources = [ ('wikipedia', from_wikipedia()) ]
+    sources = [ ('digital_digest', from_digital_digest()) ]
     
     scrape_and_merge(sources, results)
     
@@ -97,7 +85,7 @@ def generate_csv(results, options):
             for version_full in sorted(results.keys(), key=lambda s: list(map(int, s.split('.')))):
                 output_line = []
                 item = results[version_full]
-                output_line = [version_full, item['date']]
+                output_line = [version_full, item['date'] if 'date' in item else '']
                 spamwriter.writerow(output_line) 
     return
     

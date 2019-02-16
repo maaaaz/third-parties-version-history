@@ -35,12 +35,12 @@ VERSION = '1.2'
 
 # Options definition
 parser = argparse.ArgumentParser(description="version: " + VERSION)
-parser.add_argument('-o', '--output-file', help='Output csv file (default ./firefox.csv)', default=path.abspath(path.join(os.getcwd(), './firefox.csv')))
+parser.add_argument('-o', '--output-file', help='Output csv file (default ./putty.csv)', default=path.abspath(path.join(os.getcwd(), './putty.csv')))
 
 def from_chocolatey():
-    root = fromstring(requests.get('https://chocolatey.org/packages/Firefox').content)
+    root = fromstring(requests.get('https://chocolatey.org/packages/putty').content)
     trs = root.findall('.//tr')
-    p_version = re.compile('(?P<version>\d{2}\.[0-9.]*)', re.IGNORECASE)
+    p_version = re.compile('(?P<version>\d{1}\.[0-9.]*)', re.IGNORECASE)
     
     for entry in trs:
         date = entry.xpath('string(td[3])').strip()
@@ -50,12 +50,29 @@ def from_chocolatey():
         if version_entry and date:
             release = version_entry.group('version')
             
-            firefox = {}
+            putty = {}
             format_str = "%A, %B %d, %Y"
             datetime_obj = datetime.datetime.strptime(date, format_str)
-            firefox['date'] = datetime_obj.date().isoformat()
+            putty['date'] = datetime_obj.date().isoformat()
         
-            yield release, firefox
+            yield release, putty
+    
+def from_putty():
+    root = fromstring(requests.get('https://www.chiark.greenend.org.uk/~sgtatham/putty/changes.html').content)
+    trs = root.findall('.//p')
+    p_version = re.compile('(?P<version>\d{1}\.[0-9.]*)', re.IGNORECASE)
+    p_date = re.compile('(?P<date>\d{4}-\d{2}-\d{2})')
+    
+    for entry in trs:
+        date = entry.xpath('string(text()[2])').strip()
+        date_entry = p_date.search(date)
+        
+        release = entry.xpath('string(a)').strip()
+        if date_entry and release:
+            putty = {}
+            putty['date'] = date_entry.group('date')
+            yield release, putty
+    
     
 def scrape_and_merge(sources, results):
     for name, source in sources:
@@ -69,12 +86,12 @@ def scrape_and_merge(sources, results):
     
 def scrape(opts):
     results = {}
-    sources = [ ('chocolatey', from_chocolatey()) ]
+    sources = [ ('putty', from_putty()),
+                ('chocolatey', from_chocolatey()) ]
     
     scrape_and_merge(sources, results)
     
     return results
-
     
 def generate_csv(results, options):
     keys = ['version_full', 'date (yyyy-mm-dd)']
@@ -84,7 +101,7 @@ def generate_csv(results, options):
             spamwriter = csv.writer(fd_output, delimiter=';', quoting=csv.QUOTE_ALL, lineterminator='\n')
             spamwriter.writerow(keys)
             
-            for version_full in sorted(results.keys(), key=lambda s: list(map(int, s.split('.')))):
+            for version_full in sorted(results.keys(), key=lambda s: s.split('.')):
                 output_line = []
                 item = results[version_full]
                 output_line = [version_full, item['date']]

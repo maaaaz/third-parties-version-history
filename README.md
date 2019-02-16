@@ -12,12 +12,16 @@ Third-party tools currently listed here
 * [Google Chrome](./Google%20Chrome)
 * [Java](./Java)
 * [Mozilla Firefox](./Mozilla%20Firefox)
+* [mRemoteNG](./mRemoteNG)
+* [Putty](./Putty)
 * [VLC](./VLC)
+* [VMWare Horizon View](./VMWare%20Horizon%20View)
 
 Changelog
 ---------
-* version 1.1 - 28/12/2018: fixes for Flash and Java ; Reader, Chrome and VLC added
-* version 1.0 - 02/11/2018: initial commit
+* version 1.2 - 2019-02-16: fixes for Firefox and VLC ; Putty, mRemoteNG and VMWare Horizon View added
+* version 1.1 - 2018-12-28: fixes for Flash and Java ; Reader, Chrome and VLC added
+* version 1.0 - 2018-11-02: initial commit
 
 Copyright and license
 ---------------------
