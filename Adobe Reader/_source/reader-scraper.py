@@ -52,7 +52,7 @@ def from_adobe():
             release = version_entry.group('version')
             
             reader = {}
-            for fmt in ('%b %d, %Y', '%B %d, %Y', '%b. %d, %Y'):
+            for fmt in ('%b %d, %Y', '%b %d,%Y', '%B %d, %Y', '%B %d,%Y', '%b. %d, %Y', '%b. %d,%Y'):
                 try:
                     datetime_obj = datetime.datetime.strptime(date, fmt)
                 except ValueError:
