@@ -72,7 +72,7 @@ def from_adobe():
                 yield version_full_2, flash
 
 def from_snapfiles():
-    root = fromstring(requests.get('http://www.snapfiles.com/apphistory/flashplayer_history.html').content)
+    root = fromstring(requests.get('https://www.snapfiles.com/apphistory/flashplayer_history.html').content)
     trs = root.findall('.//*[@id="apphistory-container"]/h3')
     for entry in trs:
         date = entry.xpath('string(span/text())')
