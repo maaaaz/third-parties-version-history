@@ -17,6 +17,9 @@ Third-party tools currently listed here
 * [Java](./Java)
 * [Jetty](./Jetty)
 * [MariaDB](./MariaDB)
+* [Microsoft Edge Chromium](./Microsoft%20%Edge%20Chromium)
+* [Microsoft Exchange Server](./Microsoft%20%Exchange%20Server)
+* [Microsoft SQL Server](./Microsoft%20%SQL%20Server)
 * [MongoDB](./MongoDB)
 * [Mozilla Firefox](./Mozilla%20Firefox)
 * [mRemoteNG](./mRemoteNG)
@@ -33,6 +36,7 @@ Third-party tools currently listed here
 
 Changelog
 ---------
+* version 1.6 - 2020-05-21: Microsoft Edge Chromium, Exchange Server and SQL Server added
 * version 1.5 - 2020-04-10: Oracle VirtualBox and VMWare Workstation added
 * version 1.4 - 2020-04-05: 7-Zip, ClamAV, Drupal, Jetty, MariaDB, MySQL, MySQL, NGINX, PostgreSQL, WinSCP added
 * version 1.3 - 2020-03-07: Apache Tomcat and PHP added
