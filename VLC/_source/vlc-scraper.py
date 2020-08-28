@@ -39,20 +39,24 @@ VERSION = '1.2'
 parser = argparse.ArgumentParser(description="version: " + VERSION)
 parser.add_argument('-o', '--output-file', help='Output csv file (default ./vlc.csv)', default=path.abspath(path.join(os.getcwd(), './vlc.csv')))
 
-def from_digital_digest():
-    root = fromstring(requests.get('http://www.digital-digest.com/software/videolan_history.html').content)
-    trs = root.findall('.//div[@class="softwareDescription"]/ul/li/a')
-    p_version = re.compile('Version (?P<version>[0-9.]*) \((?P<date>(.*))\)', re.IGNORECASE)
+def from_chocolatey():
+    root = fromstring(re.sub(r'[^\u0020-\uD7FF\u0009\u000A\u000D\uE000-\uFFFD\U00010000-\U0010FFFF]+', '', requests.get('https://chocolatey.org/packages/vlc').content.decode('utf-8')))
+    trs = root.findall('.//tr')
+    p_version = re.compile('(?P<version>\d{1,2}\..*)', re.IGNORECASE)
     
     for entry in trs:
-        release_and_date = p_version.match(entry.text_content())
-        if release_and_date:
-            vlc = {}
-            release = release_and_date.group('version')
-            date = release_and_date.group('date')
-            datetime_obj = datetime.datetime.strptime(date, "%b %d, %Y").date().isoformat()
-            vlc['date'] = datetime_obj
+        date = entry.xpath('string(td[3])').strip()
+        release = entry.xpath('string(td[1]/a|td[1]/span)')
+        
+        version_entry = p_version.search(release)
+        if version_entry and date:
+            release = version_entry.group('version')
             
+            vlc = {}
+            format_str = "%A, %B %d, %Y"
+            datetime_obj = datetime.datetime.strptime(date, format_str)
+            vlc['date'] = datetime_obj.date().isoformat()
+        
             yield release, vlc
 
 def scrape_and_merge(sources, results):
@@ -67,7 +71,7 @@ def scrape_and_merge(sources, results):
     
 def scrape(opts):
     results = {}
-    sources = [ ('digital_digest', from_digital_digest()) ]
+    sources = [ ('chocolatey', from_chocolatey()) ]
     
     scrape_and_merge(sources, results)
     
