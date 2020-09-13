@@ -972,6 +972,7 @@
 "14.0.3281.6";"Cumulative update 19 (CU19) for SQL Server 2017";"2020-02-05"
 "14.0.3294.2";"Cumulative update 20 (CU20) for SQL Server 2017";"2020-04-07"
 "14.0.3335.7";"Cumulative update 21 (CU21) for SQL Server 2017";"2020-07-01"
+"14.0.3356.20";"Cumulative update 22 (CU22) for SQL Server 2017";"2020-09-11"
 "15.0.1000.34";"Microsoft SQL Server 2019 Community Technology Preview 2.0 (CTP 2.0)";"2018-09-24"
 "15.0.1100.94";"Microsoft SQL Server 2019 Community Technology Preview 2.1 (CTP 2.1)";"2018-11-06"
 "15.0.1200.24";"Microsoft SQL Server 2019 Community Technology Preview 2.2 (CTP 2.2)";"2018-12-11"
@@ -991,3 +992,4 @@
 "15.0.4033.1";"Cumulative update 4 (CU4) for SQL Server 2019";"2020-03-31"
 "15.0.4043.16";"Cumulative update 5 (CU5) for SQL Server 2019";"2020-06-22"
 "15.0.4053.23";"Cumulative update 6 (CU6) for SQL Server 2019";"2020-08-04"
+"15.0.4063.15";"Cumulative update 7 (CU7) for SQL Server 2019";"2020-09-02"
