@@ -106,7 +106,7 @@ def generate_csv(results, options):
             spamwriter = csv.writer(fd_output, delimiter=';', quoting=csv.QUOTE_ALL, lineterminator='\n')
             spamwriter.writerow(keys)
             
-            for version_full in sorted(results.keys(), key=LooseVersion):
+            for version_full in sorted(results, key=lambda v: int(v.split('.', 2)[0])):
                 output_line = []
                 item = results[version_full]
                 output_line = [version_full, item['date']]

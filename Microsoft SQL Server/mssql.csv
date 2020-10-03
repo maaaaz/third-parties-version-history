@@ -931,6 +931,7 @@
 "13.0.5698.0";"Cumulative update 12 (CU12) for SQL Server 2016 Service Pack 2";"2020-02-25"
 "13.0.5820.21";"Cumulative update 13 (CU13) for SQL Server 2016 Service Pack 2";"2020-05-28"
 "13.0.5830.85";"Cumulative update 14 (CU14) for SQL Server 2016 Service Pack 2";"2020-08-06"
+"13.0.5850.14";"Cumulative update 15 (CU15) for SQL Server 2016 Service Pack 2";"2020-09-28"
 "14.0.1.246";"Microsoft SQL Server vNext Community Technology Preview 1 (CTP1) (Linux support; codename Helsinki)";"2016-11-16"
 "14.0.100.187";"Microsoft SQL Server vNext Community Technology Preview 1.1 (CTP1.1) (Linux support; codename Helsinki)";"2016-12-16"
 "14.0.200.24";"Microsoft SQL Server vNext Community Technology Preview 1.2 (CTP1.2) (Linux support; codename Helsinki)";"2017-01-20"
@@ -993,3 +994,4 @@
 "15.0.4043.16";"Cumulative update 5 (CU5) for SQL Server 2019";"2020-06-22"
 "15.0.4053.23";"Cumulative update 6 (CU6) for SQL Server 2019";"2020-08-04"
 "15.0.4063.15";"Cumulative update 7 (CU7) for SQL Server 2019";"2020-09-02"
+"15.0.4073.23";"Cumulative update 8 (CU8) for SQL Server 2019";"2020-10-01"
