@@ -99,7 +99,7 @@ def from_microsoft():
             exchange = {}
             exchange['date'] = date
             exchange['version_short'] = version_short
-            exchange['description'] = description
+            exchange['description'] = description.strip()
             
             if version_short and not(version_full):
                 yield version_short, exchange
