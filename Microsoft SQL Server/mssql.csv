@@ -986,6 +986,7 @@
 "14.0.3370.1";"Security update for SQL Server 2017 CU22: January 12, 2021";"2021-01-12"
 "14.0.3381.3";"Cumulative update 23 (CU23) for SQL Server 2017";"2021-02-24"
 "14.0.3391.2";"Cumulative update 24 (CU24) for SQL Server 2017";"2021-05-10"
+"14.0.3401.7";"Cumulative update 25 (CU25) for SQL Server 2017";"2021-07-12"
 "15.0.1000.34";"Microsoft SQL Server 2019 Community Technology Preview 2.0 (CTP 2.0)";"2018-09-24"
 "15.0.1100.94";"Microsoft SQL Server 2019 Community Technology Preview 2.1 (CTP 2.1)";"2018-11-06"
 "15.0.1200.24";"Microsoft SQL Server 2019 Community Technology Preview 2.2 (CTP 2.2)";"2018-12-11"
@@ -1012,3 +1013,4 @@
 "15.0.4102.2";"Cumulative update 9 (CU9) for SQL Server 2019";"2021-02-11"
 "15.0.4123.1";"Cumulative update 10 (CU10) for SQL Server 2019";"2021-04-06"
 "15.0.4138.2";"Cumulative update 11 (CU11) for SQL Server 2019";"2021-06-10"
+"15.0.4153.1";"Cumulative update 12 (CU12) for SQL Server 2019";"2021-08-04"
