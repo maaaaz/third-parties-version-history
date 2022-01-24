@@ -45,8 +45,8 @@ def from_chocolatey():
     p_version = re.compile('(?P<version>\d{1,2}\..*)', re.IGNORECASE)
     
     for entry in trs:
-        date = entry.xpath('string(td[3])').strip()
-        release = entry.xpath('string(td[1]/a|td[1]/span)')
+        date = entry.xpath('string(td[4])').strip()
+        release = entry.xpath('string(td[2]/a|td[2]/span)')
         
         version_entry = p_version.search(release)
         if version_entry and date:
@@ -106,7 +106,7 @@ def generate_csv(results, options):
             spamwriter = csv.writer(fd_output, delimiter=';', quoting=csv.QUOTE_ALL, lineterminator='\n')
             spamwriter.writerow(keys)
             
-            for version_full in sorted(results, key=lambda v: int(v.split('.', 2)[0])):
+            for version_full in sorted(results.keys(), key=lambda v: int(v.split('.', 2)[0])):
                 output_line = []
                 item = results[version_full]
                 output_line = [version_full, item['date']]

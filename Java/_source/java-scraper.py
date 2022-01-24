@@ -28,6 +28,8 @@ import argparse
 
 from lxml.html.soupparser import fromstring
 import requests
+import datetime
+from distutils.version import LooseVersion
 
 # Script version
 VERSION = '1.2'
@@ -49,7 +51,7 @@ def from_wikipedia():
         date = entry.xpath('string(td[2]/text())')
         
         java_entry = p_java_until_9.search(release)
-        if java_entry:
+        if java_entry and not "+" in java_entry.group('version_minor').strip():
             java = {}
             version_full = "1.%s.0_%s" % (java_entry.group('version_major').strip(), java_entry.group('version_minor').strip())
             java['version_major'] = java_entry.group('version_major')
@@ -57,15 +59,16 @@ def from_wikipedia():
             yield version_full, java
             
         java_entry = p_java_9_plus.search(release)
-        if java_entry:
+        if java_entry and not "+" in java_entry.group('version_minor').strip():
             java = {}
             version_full = "1.%s.%s" % (java_entry.group('version_major').strip(), java_entry.group('version_minor').strip().replace('.','_'))
             java['version_major'] = java_entry.group('version_major')
             java['date'] = date.strip()
             yield version_full, java
-            
+
+'''
 def from_oracle():
-    root = fromstring(requests.get('https://java.com/en/download/faq/release_dates.xml').content)
+    root = fromstring(requests.get('https://java.com/releases/', headers={"user-agent": "Chrome 72"}).content)
     
     p_java = re.compile('java (?P<version_major>\d*) update (?P<version_minor>\d*)', re.IGNORECASE)
     
@@ -81,6 +84,35 @@ def from_oracle():
             java['version_major'] = java_entry.group('version_major')
             java['date'] = date.strip()
             yield version_full, java
+'''
+def from_chocolatey():
+    urls = [ 'https://community.chocolatey.org/packages/oraclejdk',
+             'https://community.chocolatey.org/packages/jre8',
+             'https://community.chocolatey.org/packages/corretto11jdk',
+             'https://community.chocolatey.org/packages/openjdk11',
+           ]
+    for url in urls:
+        root = fromstring(requests.get(url).content)
+        trs = root.findall('.//tr')
+        p_version = re.compile('(?P<version_major>\d{1,2}?)\.(?P<version_0>.)\.(?P<version_minor>.*)', re.IGNORECASE)
+        
+        for entry in trs:
+            date = entry.xpath('string(td[4])').strip()
+            release = entry.xpath('string(td[2]/a|td[2]/span)')
+            
+            
+            version_entry = p_version.search(release)
+            if version_entry and date:
+                release = "1.%s.%s_%s" % (version_entry.group('version_major').strip(),version_entry.group('version_0').strip() , version_entry.group('version_minor').strip())
+                print(release)
+                
+                java = {}
+                format_str = "%A, %B %d, %Y"
+                datetime_obj = datetime.datetime.strptime(date, format_str)
+                java['date'] = datetime_obj.date().isoformat()
+                java['version_major'] = version_entry.group('version_major')
+            
+                yield release, java
 
 def scrape_and_merge(sources, results):
     for name, source in sources:
@@ -94,7 +126,7 @@ def scrape_and_merge(sources, results):
 def scrape(opts):
     results = {}
     sources = [ ('wikipedia', from_wikipedia()), 
-                ('oracle', from_oracle()) ]
+                ('chocolatey', from_chocolatey()) ]
     
     scrape_and_merge(sources, results)
     
@@ -108,12 +140,15 @@ def generate_csv(results, options):
         with open(options.output_file, mode='w', encoding='utf-8') as fd_output:
             spamwriter = csv.writer(fd_output, delimiter=';', quoting=csv.QUOTE_ALL, lineterminator='\n')
             spamwriter.writerow(keys)
-            
+            '''
             for version_full in sorted(results.keys(), key=lambda s: list(map(int, s.replace('.0_','.').split('.', 2)))):
+            '''
+            for version_full in sorted(results.keys(), key=LooseVersion):
                 output_line = []
                 item = results[version_full]
                 output_line = [version_full, item['version_major'], item['date']]
-                spamwriter.writerow(output_line) 
+                spamwriter.writerow(output_line)
+                
     return
     
 def main():

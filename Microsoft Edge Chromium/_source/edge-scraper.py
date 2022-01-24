@@ -44,8 +44,8 @@ def from_chocolatey():
     p_version = re.compile('(?P<version>\d{2}\.[0-9.]*)', re.IGNORECASE)
     
     for entry in trs:
-        date = entry.xpath('string(td[3])').strip()
-        release = entry.xpath('string(td[1]/a|td[1]/span)')
+        date = entry.xpath('string(td[4])').strip()
+        release = entry.xpath('string(td[2]/a|td[2]/span)')
         
         version_entry = p_version.search(release)
         if version_entry and date:
