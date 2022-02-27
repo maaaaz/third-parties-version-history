@@ -33,7 +33,7 @@ from distutils.version import LooseVersion
 import requests
 
 # Script version
-VERSION = '1.0'
+VERSION = '1.1'
 
 # Options definition
 parser = argparse.ArgumentParser(description="version: " + VERSION)
@@ -41,8 +41,11 @@ parser.add_argument('-o', '--output-file', help='Output csv file (default ./clam
 
 def from_clamav():
     urls = ['https://www.clamav.net/downloads', 'https://www.clamav.net/previous_stable_releases']
+    
+    # specifying headers to bypass Cloudflare protection
+    headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/98.0.4758.102 Safari/537.36"}
     for url in urls:
-        root = fromstring(requests.get(url).content)
+        root = fromstring(requests.get(url, headers=headers).content)
         trs = root.findall('.//tr')
         p_version = re.compile('clamav-(?P<version>\d{1,2}\..*)\.tar\.gz$', re.IGNORECASE)
         

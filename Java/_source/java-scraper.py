@@ -104,7 +104,6 @@ def from_chocolatey():
             version_entry = p_version.search(release)
             if version_entry and date:
                 release = "1.%s.%s_%s" % (version_entry.group('version_major').strip(),version_entry.group('version_0').strip() , version_entry.group('version_minor').strip())
-                print(release)
                 
                 java = {}
                 format_str = "%A, %B %d, %Y"
