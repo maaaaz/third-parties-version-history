@@ -41,7 +41,7 @@ parser.add_argument('-o', '--output-file', help='Output csv file (default ./chro
 def from_wikipedia():
     root = fromstring(requests.get('https://en.wikipedia.org/wiki/Google_Chrome_version_history').content)
     trs = root.findall('.//tbody/tr')
-    p_version = re.compile('(?P<version>\d{1,2}\.[0-9.]*)', re.IGNORECASE)
+    p_version = re.compile('(?P<version>\d{1,3}\.[0-9.]*)', re.IGNORECASE)
     
     for entry in trs:
         release = entry.xpath('string(td[1])').strip()
