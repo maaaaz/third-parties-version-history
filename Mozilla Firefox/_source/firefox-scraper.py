@@ -40,7 +40,7 @@ parser.add_argument('-o', '--output-file', help='Output csv file (default ./fire
 def from_chocolatey():
     root = fromstring(requests.get('https://chocolatey.org/packages/Firefox').content)
     trs = root.findall('.//tr')
-    p_version = re.compile('(?P<version>\d{2}\.[0-9.]*)', re.IGNORECASE)
+    p_version = re.compile(r'(?P<version>\d{1,3}\.[0-9.]*)', re.IGNORECASE)
     
     for entry in trs:
         date = entry.xpath('string(td[4])').strip()

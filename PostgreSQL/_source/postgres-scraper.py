@@ -29,7 +29,7 @@ import datetime
 
 from lxml.html.soupparser import fromstring
 from urllib.parse import urljoin
-from distutils.version import LooseVersion
+from packaging import version
 import requests
 
 # Script version
@@ -42,7 +42,7 @@ parser.add_argument('-o', '--output-file', help='Output csv file (default ./post
 def from_chocolatey():
     root = fromstring(requests.get('https://chocolatey.org/packages/postgresql').content)
     trs = root.findall('.//tr')
-    p_version = re.compile('(?P<version>\d{1,2}\..*)', re.IGNORECASE)
+    p_version = re.compile(r'(?P<version>\d{1,2}\..*)', re.IGNORECASE)
     
     for entry in trs:
         date = entry.xpath('string(td[4])').strip()
@@ -62,7 +62,7 @@ def from_chocolatey():
 def from_bucardo():
     root = fromstring(requests.get('https://bucardo.org/postgres_all_versions.html').content)
     trs = root.findall('.//td')
-    p_version_and_date = re.compile('^(?P<version>\d{1,2}\..*) \((?P<date>[\d]{4}-[\d]{2}-[\d]{2})\)$', re.IGNORECASE)
+    p_version_and_date = re.compile(r'^(?P<version>\d{1,2}\..*) \((?P<date>[\d]{4}-[\d]{2}-[\d]{2})\)$', re.IGNORECASE)
     
     for entries in trs:
         entries = entries.text_content().splitlines()
@@ -106,7 +106,8 @@ def generate_csv(results, options):
             spamwriter = csv.writer(fd_output, delimiter=';', quoting=csv.QUOTE_ALL, lineterminator='\n')
             spamwriter.writerow(keys)
             
-            for version_full in sorted(results.keys(), key=lambda v: int(v.split('.', 2)[0])):
+            for version_full in sorted(results.keys(), key=version.parse):
+            #for version_full in sorted(results.keys(), key=lambda v: int(v.split('.', 2)[0])):
                 output_line = []
                 item = results[version_full]
                 output_line = [version_full, item['date']]

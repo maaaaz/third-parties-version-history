@@ -29,7 +29,7 @@ import datetime
 
 from lxml.html.soupparser import fromstring
 from urllib.parse import urljoin
-from distutils.version import LooseVersion
+from packaging import version
 import requests
 import codecs
 from contextlib import closing
@@ -84,7 +84,7 @@ def generate_csv(results, options):
             spamwriter = csv.writer(fd_output, delimiter=';', quoting=csv.QUOTE_ALL, lineterminator='\n')
             spamwriter.writerow(keys)
             
-            for version_full in sorted(results.keys(), key=LooseVersion):
+            for version_full in sorted(results.keys(), key=version.parse):
                 output_line = []
                 item = results[version_full]
                 output_line = [version_full, item['description'], item['date']]

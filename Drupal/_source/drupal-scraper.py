@@ -23,7 +23,7 @@ from codecs import open
 from os import path
 from lxml.html.soupparser import fromstring
 from urllib.parse import urljoin
-from distutils.version import LooseVersion
+from packaging import version
 
 import re
 import csv
@@ -47,7 +47,7 @@ def from_drupal_old_releases():
     url_old_release = 'https://www.drupal.org/docs/8/understanding-drupal-version-numbers/drupal-release-history'
     root = fromstring(requests.get(url_old_release).content)
     trs = root.findall('.//p')
-    p_release_and_date = re.compile('Drupal (?P<version>\d{1,2}\..*), (?P<date>.*)$', re.IGNORECASE)
+    p_release_and_date = re.compile(r'Drupal (?P<version>\d{1,2}\..*), (?P<date>.*)$', re.IGNORECASE)
     for entry in trs:
         date = entry.xpath('string(td[2])').strip()
         release = entry.xpath('string(td[1])').strip()
@@ -64,15 +64,21 @@ def from_drupal_old_releases():
             yield release, drupal
 
 def from_drupal_new_releases_enum(target):
-    page_url = 'https://www.drupal.org/project/drupal/releases?page=%d' % target
+    page_url = 'https://www.drupal.org/project/drupal/releases?version=%d' % target
     root = fromstring(requests.get(page_url).content)
-    
+
     div = root.xpath('.//div[contains(@class,"node-project-release")]')
-    p_version = re.compile('drupal (?P<version>\d{1,2}\..*)$', re.IGNORECASE)
-    for entry in div:
-        release = entry.xpath('string(h2/a)')
-        date = entry.xpath('string(div/time)')
-        
+    root_entry = div[0]
+    
+    p_version = re.compile(r'(?P<version>\d{1,2}\..*)$', re.IGNORECASE)
+    page_url_version = urljoin('https://www.drupal.org/project/', root_entry.xpath('string(h2/a/@href)'))
+    root_version = fromstring(requests.get(page_url_version).content)
+    
+    entry_version = root_version.xpath('.//div[contains(@class, "item-list")]/ul/li')
+    for entry in entry_version:
+        release = entry.xpath('string(span[1]/span/a)')
+        date = entry.xpath('string(span[2]/span)')
+    
         version_entry = p_version.search(release)
         if version_entry and date:
             release = version_entry.group('version')
@@ -88,15 +94,11 @@ def from_drupal_new_releases():
     base_url = 'https://www.drupal.org/project/drupal/releases'
     root = fromstring(requests.get(base_url).content)
     
-    # retrieve number of pages
-    p_page = re.compile('page=(?P<pages_number>[\d]*)')
-    num_of_pages = int(p_page.search(root.xpath('string(.//li[@class="pager-last last"]/a/@href)')).group('pages_number'))
+    targets = range(7,11)
     
-    targets = range(0, num_of_pages + 1)
-    
-    # enum each page
+    # enum each version page
     with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
-        futs = [ ("Drupal releases page %s" % target, executor.submit(functools.partial(from_drupal_new_releases_enum, target)))
+        futs = [ ("Drupal releases version %s" % target, executor.submit(functools.partial(from_drupal_new_releases_enum, target)))
                  for target in targets ]
     
         return futs
@@ -137,7 +139,7 @@ def generate_csv(results, options):
             spamwriter = csv.writer(fd_output, delimiter=';', quoting=csv.QUOTE_ALL, lineterminator='\n')
             spamwriter.writerow(keys)
             
-            for version_full in sorted(results.keys()):
+            for version_full in sorted(results.keys(), key=version.parse):
                 output_line = []
                 item = results[version_full]
                 output_line = [version_full, item['date']]

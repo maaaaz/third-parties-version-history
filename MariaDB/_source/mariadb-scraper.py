@@ -29,7 +29,7 @@ import datetime
 
 from lxml.html.soupparser import fromstring
 from urllib.parse import urljoin
-from distutils.version import LooseVersion
+from packaging import version
 import requests
 
 # Script version
@@ -42,7 +42,7 @@ parser.add_argument('-o', '--output-file', help='Output csv file (default ./mari
 def from_chocolatey():
     root = fromstring(requests.get('https://chocolatey.org/packages/mariadb').content)
     trs = root.findall('.//tr')
-    p_version = re.compile('(?P<version>\d{1,2}\..*)', re.IGNORECASE)
+    p_version = re.compile(r'(?P<version>\d{1,2}\..*)', re.IGNORECASE)
     
     for entry in trs:
         date = entry.xpath('string(td[4])').strip()
@@ -86,7 +86,7 @@ def generate_csv(results, options):
             spamwriter = csv.writer(fd_output, delimiter=';', quoting=csv.QUOTE_ALL, lineterminator='\n')
             spamwriter.writerow(keys)
             
-            for version_full in sorted(results.keys(), key=LooseVersion):
+            for version_full in sorted(results.keys(), key=version.parse):
                 output_line = []
                 item = results[version_full]
                 output_line = [version_full, item['date']]

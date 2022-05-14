@@ -42,7 +42,7 @@ parser.add_argument('-o', '--output-file', help='Output csv file (default ./vlc.
 def from_chocolatey():
     root = fromstring(re.sub(r'[^\u0020-\uD7FF\u0009\u000A\u000D\uE000-\uFFFD\U00010000-\U0010FFFF]+', '', requests.get('https://chocolatey.org/packages/vlc').content.decode('utf-8')))
     trs = root.findall('.//tr')
-    p_version = re.compile('(?P<version>\d{1,2}\..*)', re.IGNORECASE)
+    p_version = re.compile(r'(?P<version>\d{1,2}\..*)', re.IGNORECASE)
     
     for entry in trs:
         date = entry.xpath('string(td[4])').strip()

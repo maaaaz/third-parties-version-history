@@ -29,7 +29,7 @@ import datetime
 
 from lxml.html.soupparser import fromstring
 from urllib.parse import urljoin
-from distutils.version import LooseVersion
+from packaging import version
 import requests
 
 # Script version
@@ -47,7 +47,7 @@ def from_clamav():
     for url in urls:
         root = fromstring(requests.get(url, headers=headers).content)
         trs = root.findall('.//tr')
-        p_version = re.compile('clamav-(?P<version>\d{1,2}\..*)\.tar\.gz$', re.IGNORECASE)
+        p_version = re.compile(r'clamav-(?P<version>\d{1,2}\..*)\.tar\.gz$', re.IGNORECASE)
         
         for entry in trs:
             date = entry.xpath('string(td[2])').strip()
@@ -67,7 +67,7 @@ def from_clamav():
 def from_chocolatey():
     root = fromstring(requests.get('https://chocolatey.org/packages/clamav').content)
     trs = root.findall('.//tr')
-    p_version = re.compile('(?P<version>\d{1,2}\..*)', re.IGNORECASE)
+    p_version = re.compile(r'(?P<version>\d{1,2}\..*)', re.IGNORECASE)
     
     for entry in trs:
         date = entry.xpath('string(td[4])').strip()
@@ -112,7 +112,7 @@ def generate_csv(results, options):
             spamwriter = csv.writer(fd_output, delimiter=';', quoting=csv.QUOTE_ALL, lineterminator='\n')
             spamwriter.writerow(keys)
             
-            for version_full in sorted(results.keys(), key=LooseVersion):
+            for version_full in sorted(results.keys(), key=version.parse):
                 output_line = []
                 item = results[version_full]
                 output_line = [version_full, item['date']]

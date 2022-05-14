@@ -29,7 +29,7 @@ import datetime
 
 from lxml.html.soupparser import fromstring
 from urllib.parse import urljoin
-from distutils.version import LooseVersion
+from packaging import version
 import requests
 
 # Script version
@@ -54,7 +54,7 @@ def from_virtualbox():
         root = fromstring(requests.get(url).content)
         trs = root.xpath('.//p')
         
-        p_version_and_date = re.compile('VirtualBox (?P<version>(\d{1,2}\.?){3}) \(released\s(?P<date>.*?)\)', re.IGNORECASE)
+        p_version_and_date = re.compile(r'VirtualBox (?P<version>(\d{1,2}\.?){3}) \(released\s(?P<date>.*?)\)', re.IGNORECASE)
         for entry in trs:
             
             version_and_date = p_version_and_date.search(entry.text_content())
@@ -76,7 +76,7 @@ def from_virtualbox():
 def from_chocolatey():
     root = fromstring(requests.get('https://chocolatey.org/packages/virtualbox').content)
     trs = root.findall('.//tr')
-    p_version = re.compile('(?P<version>\d{1,2}\..*)', re.IGNORECASE)
+    p_version = re.compile(r'(?P<version>\d{1,2}\..*)', re.IGNORECASE)
     
     for entry in trs:
         date = entry.xpath('string(td[4])').strip()
@@ -121,7 +121,7 @@ def generate_csv(results, options):
             spamwriter = csv.writer(fd_output, delimiter=';', quoting=csv.QUOTE_ALL, lineterminator='\n')
             spamwriter.writerow(keys)
             
-            for version_full in sorted(results.keys(), key=LooseVersion):
+            for version_full in sorted(results.keys(), key=version.parse):
                 output_line = []
                 item = results[version_full]
                 output_line = [version_full, item['date']]

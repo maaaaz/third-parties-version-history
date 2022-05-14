@@ -40,7 +40,7 @@ parser.add_argument('-o', '--output-file', help='Output csv file (default ./putt
 def from_chocolatey():
     root = fromstring(requests.get('https://chocolatey.org/packages/putty').content)
     trs = root.findall('.//tr')
-    p_version = re.compile('(?P<version>\d{1}\.[0-9.]*)', re.IGNORECASE)
+    p_version = re.compile(r'(?P<version>\d{1}\.[0-9.]*)', re.IGNORECASE)
     
     for entry in trs:
         date = entry.xpath('string(td[4])').strip()
@@ -60,8 +60,8 @@ def from_chocolatey():
 def from_putty():
     root = fromstring(requests.get('https://www.chiark.greenend.org.uk/~sgtatham/putty/changes.html').content)
     trs = root.findall('.//p')
-    p_version = re.compile('(?P<version>\d{1}\.[0-9.]*)', re.IGNORECASE)
-    p_date = re.compile('(?P<date>\d{4}-\d{2}-\d{2})')
+    p_version = re.compile(r'(?P<version>\d{1}\.[0-9.]*)', re.IGNORECASE)
+    p_date = re.compile(r'(?P<date>\d{4}-\d{2}-\d{2})')
     
     for entry in trs:
         date = entry.xpath('string(text()[2])').strip()

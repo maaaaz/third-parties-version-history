@@ -41,7 +41,7 @@ parser.add_argument('-o', '--output-file', help='Output csv file (default ./read
 def from_adobe():
     root = fromstring(requests.get('https://helpx.adobe.com/acrobat/release-note/release-notes-acrobat-reader.html').content)
     trs = root.findall('.//tbody/tr')
-    p_version = re.compile('(?P<version>\d{2}\.[0-9.]*)', re.IGNORECASE)
+    p_version = re.compile(r'(?P<version>\d{2}\.[0-9.]*)', re.IGNORECASE)
     
     for entry in trs:
         release = entry.xpath('string(td[2])')
@@ -65,7 +65,7 @@ def from_adobe():
 def from_chocolatey():
     root = fromstring(requests.get('https://chocolatey.org/packages/adobereader-update').content)
     trs = root.findall('.//tr')
-    p_version = re.compile('(?P<version>\d{2}\.[0-9.]*)', re.IGNORECASE)
+    p_version = re.compile(r'(?P<version>\d{2}\.[0-9.]*)', re.IGNORECASE)
     
     for entry in trs:
         date = entry.xpath('string(td[4])').strip()

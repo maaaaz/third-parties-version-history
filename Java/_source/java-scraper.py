@@ -29,7 +29,7 @@ import argparse
 from lxml.html.soupparser import fromstring
 import requests
 import datetime
-from distutils.version import LooseVersion
+from packaging import version
 
 # Script version
 VERSION = '1.2'
@@ -42,8 +42,8 @@ parser.add_argument('-o', '--output-file', help='Output csv file (default ./java
 def from_wikipedia():
     root = fromstring(requests.get('https://en.wikipedia.org/wiki/Java_version_history').content)
     
-    p_java_until_9 = re.compile('java se (?P<version_major>\d*) update (?P<version_minor>.*)', re.IGNORECASE)
-    p_java_9_plus = re.compile('java se (?P<version_major>\d*?)\.(?P<version_minor>.*)', re.IGNORECASE)
+    p_java_until_9 = re.compile(r'java se (?P<version_major>\d*) update (?P<version_minor>.*)', re.IGNORECASE)
+    p_java_9_plus = re.compile(r'java se (?P<version_major>\d*?)\.(?P<version_minor>.*)', re.IGNORECASE)
     
     trs = root.findall('.//tbody/tr')
     for entry in trs:
@@ -70,7 +70,7 @@ def from_wikipedia():
 def from_oracle():
     root = fromstring(requests.get('https://java.com/releases/', headers={"user-agent": "Chrome 72"}).content)
     
-    p_java = re.compile('java (?P<version_major>\d*) update (?P<version_minor>\d*)', re.IGNORECASE)
+    p_java = re.compile(r'java (?P<version_major>\d*) update (?P<version_minor>\d*)', re.IGNORECASE)
     
     trs = root.findall('.//tr')
     for entry in trs:
@@ -94,7 +94,7 @@ def from_chocolatey():
     for url in urls:
         root = fromstring(requests.get(url).content)
         trs = root.findall('.//tr')
-        p_version = re.compile('(?P<version_major>\d{1,2}?)\.(?P<version_0>.)\.(?P<version_minor>.*)', re.IGNORECASE)
+        p_version = re.compile(r'(?P<version_major>\d{1,2}?)\.(?P<version_0>.)\.(?P<version_minor>.*)', re.IGNORECASE)
         
         for entry in trs:
             date = entry.xpath('string(td[4])').strip()
@@ -142,7 +142,7 @@ def generate_csv(results, options):
             '''
             for version_full in sorted(results.keys(), key=lambda s: list(map(int, s.replace('.0_','.').split('.', 2)))):
             '''
-            for version_full in sorted(results.keys(), key=LooseVersion):
+            for version_full in sorted(results.keys(), key=version.parse):
                 output_line = []
                 item = results[version_full]
                 output_line = [version_full, item['version_major'], item['date']]

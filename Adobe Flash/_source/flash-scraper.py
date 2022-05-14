@@ -41,9 +41,9 @@ parser.add_argument('-o', '--output-file', help='Output csv file (default ./flas
 def from_adobe():
     root = fromstring(requests.get('https://helpx.adobe.com/flash-player/kb/archived-flash-player-versions.html').content)
     
-    p_version_1 = re.compile('flash player (?P<version_full>[.0-9]*)', re.IGNORECASE)
-    p_version_2 = re.compile('flash player (?P<version_full_1>[.0-9]*)\s+and (?P<version_full_2>[.0-9]*)', re.IGNORECASE)
-    p_date = re.compile('.*released (?P<date>.*)\)', re.IGNORECASE)
+    p_version_1 = re.compile(r'flash player (?P<version_full>[.0-9]*)', re.IGNORECASE)
+    p_version_2 = re.compile(r'flash player (?P<version_full_1>[.0-9]*)\s+and (?P<version_full_2>[.0-9]*)', re.IGNORECASE)
+    p_date = re.compile(r'.*released (?P<date>.*)\)', re.IGNORECASE)
     
     trs = root.findall('.//li')
     for entry in trs:
