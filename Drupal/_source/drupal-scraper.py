@@ -23,7 +23,7 @@ from codecs import open
 from os import path
 from lxml.html.soupparser import fromstring
 from urllib.parse import urljoin
-from packaging import version
+from looseversion import LooseVersion
 
 import re
 import csv
@@ -139,7 +139,7 @@ def generate_csv(results, options):
             spamwriter = csv.writer(fd_output, delimiter=';', quoting=csv.QUOTE_ALL, lineterminator='\n')
             spamwriter.writerow(keys)
             
-            for version_full in sorted(results.keys(), key=version.parse):
+            for version_full in sorted(results.keys(), key=LooseVersion):
                 output_line = []
                 item = results[version_full]
                 output_line = [version_full, item['date']]

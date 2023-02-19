@@ -28,7 +28,9 @@ import argparse
 import datetime
 
 from lxml.html.soupparser import fromstring
+from looseversion import LooseVersion
 import requests
+
 
 # Script version
 VERSION = '1.1'
@@ -110,7 +112,7 @@ def generate_csv(results, options):
             spamwriter = csv.writer(fd_output, delimiter=';', quoting=csv.QUOTE_ALL, lineterminator='\n')
             spamwriter.writerow(keys)
             
-            for version_full in sorted(results.keys(), key=lambda s: list(map(int, s.split('.')))):
+            for version_full in sorted(results.keys(), key=LooseVersion):
                 output_line = []
                 item = results[version_full]
                 output_line = [version_full, item['date']]
