@@ -36,7 +36,6 @@ jobs:
           SCRAPESCRIPT=$(basename "$entry")
           cd "$SCRAPEDIR"
           
-          #echo "$SCRAPEDIR"
           echo "$SCRAPESCRIPT"
           python3 -Wall $SCRAPESCRIPT
           echo "----------------"
@@ -51,13 +50,9 @@ jobs:
         do
           CSVDIR=$(dirname "$entry")
           CSVGIT=$(basename "$entry")
-    
-          #echo "$CSVDIR"
-          #echo "$CSVGIT"
-          #colordiff "$entry" "$CSVDIR\source\$CSVGIT"
-          
+         
           echo "[+] $entry"|less &&\
           colordiff -s "$entry" "$CSVDIR/_source/$CSVGIT"
           echo "----------------"
-          echo .
+          echo 
         done
