@@ -1,0 +1,6 @@
+requests
+beautifulsoup4
+lxml
+looseversion
+PyPDF2
+pandas
