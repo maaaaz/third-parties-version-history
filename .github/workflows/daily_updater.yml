@@ -58,5 +58,6 @@ jobs:
           
           echo "[+] $entry"|less &&\
           colordiff -s "$entry" "$CSVDIR/_source/$CSVGIT"
-          echo "----------------\n"
+          echo "----------------"
+          echo .
         done
