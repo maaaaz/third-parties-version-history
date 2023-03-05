@@ -1,0 +1,42 @@
+name: Daily updater
+
+on: [push]
+  #schedule:
+    #- cron:  '10 03 * * *'
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up Python 3.10
+      uses: actions/setup-python@v4
+      with:
+        python-version: "3.11"
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r $GITHUB_WORKSPACE/python-scripts-requirements.txt
+
+    - name: Updater
+      run: |
+        cd $GITHUB_WORKSPACE
+        find . -iname "*-scraper.py" -print0 | while read -d $'\0' entry
+        do
+          CWD=$(pwd)
+          SCRAPEDIR=$(dirname "$entry")
+          SCRAPESCRIPT=$(basename "$entry")
+          cd "$SCRAPEDIR"
+          
+          #echo "$SCRAPEDIR"
+          echo "$SCRAPESCRIPT"
+          python3 -Wall $SCRAPESCRIPT
+          echo "----------------"
+          cd "$CWD"
+        done
