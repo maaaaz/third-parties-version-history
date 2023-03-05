@@ -36,14 +36,15 @@ import numpy as np
 
 import pprint
 
-# Script version
+# Globals
 VERSION = '1.0'
+TARGET = 'postgres'
 
 # Options definition
 parser = argparse.ArgumentParser(description="version: " + VERSION)
 parser.add_argument('-m', '--mode', help="Mode to choose: check against a previous provided file ('previous'), or 'standalone' scrape (default 'update')", choices = ['previous', 'standalone'], type = str.lower, default = 'previous')
-parser.add_argument('-p', '--previous-file', help="Path to previous file to take as a reference", default=path.abspath(path.join(os.getcwd(), '..','./postgres.csv')))
-parser.add_argument('-o', '--output-file', help='Output csv file (default ./postgres.csv)', default=path.abspath(path.join(os.getcwd(), './postgres.csv')))
+parser.add_argument('-p', '--previous-file', help='Path to previous file to take as a reference (default ../%s.csv)' % TARGET, default=path.abspath(path.join(os.getcwd(), '..', './%s.csv' % TARGET)))
+parser.add_argument('-o', '--output-file', help='Output csv file (default ./%s.csv)' % TARGET, default=path.abspath(path.join(os.getcwd(), './%s.csv' % TARGET)))
 
 def from_chocolatey():
     root = fromstring(requests.get('https://chocolatey.org/packages/postgresql').content)
@@ -111,9 +112,8 @@ def scrape_and_generate_csv(opts):
     
     final_results = results.sort_values(by='version_full', key=np.vectorize(version.parse)).reset_index(drop=True)
     final_results.to_csv(opts.output_file, sep=';', index=False, quoting=csv.QUOTE_ALL, lineterminator='\n')
-    #print(final_results.to_csv(sep=';', index=False, quoting=csv.QUOTE_ALL, lineterminator='\n'))
     
-    return results
+    return
 
 def main():
     """
@@ -122,9 +122,15 @@ def main():
     global parser
     options = parser.parse_args()
     
+    if options.mode == 'previous':
+        if os.path.isfile(options.previous_file):
+            print('[+] using previous mode with "%s" file' % options.previous_file)
+        else:
+            parser.error('[!] previous file "%s" cannot be found' % options.previous_file)
+    
     options.output_file = path.abspath(path.join(os.getcwd(), options.output_file)) if options.output_file else options.output_file
               
-    results = scrape_and_generate_csv(options)
+    scrape_and_generate_csv(options)
     
     return
 

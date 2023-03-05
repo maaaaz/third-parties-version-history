@@ -21,10 +21,7 @@
 
 from codecs import open
 from os import path
-from lxml.html.soupparser import fromstring
 from urllib.parse import urljoin
-from looseversion import LooseVersion
-
 import re
 import csv
 import os
@@ -35,13 +32,23 @@ import requests
 import types
 import concurrent.futures
 
-# Script version
-VERSION = '1.0'
+from lxml.html.soupparser import fromstring
+#from looseversion import LooseVersion
+from distutils.version import LooseVersion
+from packaging import version
+import requests
+import pandas as pd
+import numpy as np
+
+# Globals
+VERSION = '1.1'
+TARGET = 'drupal'
 
 # Options definition
 parser = argparse.ArgumentParser(description="version: " + VERSION)
-parser.add_argument('-o', '--output-file', help='Output csv file (default ./drupal.csv)', default=path.abspath(path.join(os.getcwd(), './drupal.csv')))
-
+parser.add_argument('-m', '--mode', help="Mode to choose: check against a previous provided file ('previous'), or 'standalone' scrape (default 'update')", choices = ['previous', 'standalone'], type = str.lower, default = 'previous')
+parser.add_argument('-p', '--previous-file', help='Path to previous file to take as a reference (default ../%s.csv)' % TARGET, default=path.abspath(path.join(os.getcwd(), '..', './%s.csv' % TARGET)))
+parser.add_argument('-o', '--output-file', help='Output csv file (default ./%s.csv)' % TARGET, default=path.abspath(path.join(os.getcwd(), './%s.csv' % TARGET)))
 
 def from_drupal_old_releases():
     url_old_release = 'https://www.drupal.org/docs/8/understanding-drupal-version-numbers/drupal-release-history'
@@ -108,43 +115,37 @@ def scrape_and_merge(sources, results):
         count = 0
         if isinstance(source, types.GeneratorType):
             for version, item in source:
-                if version not in results:
-                    results[version] = item
+                if version not in results['version_full'].values and not('x-dev' in version):
+                    results.loc[len(results)] = [version, item['date']]
                     count = count + 1
                 
             print("[+] %s entries collected from '%s'" % (count, name))
         
         if isinstance(source, concurrent.futures._base.Future):
             for version, item in source.result():
-                if version not in results:
-                    results[version] = item
+                if version not in results['version_full'].values and not('x-dev' in version):
+                    results.loc[len(results)] = [version, item['date']]
                     count = count + 1
                 
             print("[+] %s entries collected from '%s'" % (count, name))
     
-def scrape(opts):
-    results = {}
+def scrape_and_generate_csv(opts):
+    results = pd.DataFrame(columns=['version_full', 'date (yyyy-mm-dd)'])
     sources = [ ('drupal_old', from_drupal_old_releases()) ]
     sources = sources + from_drupal_new_releases()
     
     scrape_and_merge(sources, results)
     
-    return results
-
+    if opts.mode == 'previous':
+        old_results = pd.read_csv(opts.previous_file, delimiter=';', quoting=csv.QUOTE_ALL, lineterminator='\n')
+        results_concat = pd.concat([old_results, results]).drop_duplicates(subset = 'version_full')
+        results = results_concat
     
-def generate_csv(results, options):
-    keys = ['version_full', 'date (yyyy-mm-dd)']
-    if results:
-        with open(options.output_file, mode='w', encoding='utf-8') as fd_output:
-            spamwriter = csv.writer(fd_output, delimiter=';', quoting=csv.QUOTE_ALL, lineterminator='\n')
-            spamwriter.writerow(keys)
-            
-            for version_full in sorted(results.keys(), key=LooseVersion):
-                output_line = []
-                item = results[version_full]
-                output_line = [version_full, item['date']]
-                spamwriter.writerow(output_line) 
+    final_results = results.sort_values(by='version_full', key=np.vectorize(version.parse)).reset_index(drop=True)
+    final_results.to_csv(opts.output_file, sep=';', index=False, quoting=csv.QUOTE_ALL, lineterminator='\n')
+    
     return
+
     
 def main():
     """
@@ -153,10 +154,15 @@ def main():
     global parser
     options = parser.parse_args()
     
+    if options.mode == 'previous':
+        if os.path.isfile(options.previous_file):
+            print('[+] using previous mode with "%s" file' % options.previous_file)
+        else:
+            parser.error('[!] previous file "%s" cannot be found' % options.previous_file)
+        
     options.output_file = path.abspath(path.join(os.getcwd(), options.output_file)) if options.output_file else options.output_file
               
-    results = scrape(options)
-    generate_csv(results, options)
+    scrape_and_generate_csv(options)
     
     return
 
