@@ -27,6 +27,7 @@ jobs:
     - name: Updater
       run: |
         cd $GITHUB_WORKSPACE
+        
         find . -iname "*-scraper.py" -print0 | while read -d $'\0' entry
         do
           CWD=$(pwd)
