@@ -14,7 +14,7 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-    - name: Set up Python 3.10
+    - name: Set up Python 3.11
       uses: actions/setup-python@v4
       with:
         python-version: "3.11"
@@ -24,10 +24,9 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r $GITHUB_WORKSPACE/python-scripts-requirements.txt
 
-    - name: Updater
+    - name: Grabbing latest versions
       run: |
         cd $GITHUB_WORKSPACE
-        
         
         find . -iname "*-scraper.py" -print0 | while read -d $'\0' entry
         do
@@ -41,4 +40,21 @@ jobs:
           python3 -Wall $SCRAPESCRIPT
           echo "----------------"
           cd "$CWD"
+        done
+        
+    - name: Checking new versions
+      run: |
+        cd $GITHUB_WORKSPACE
+        
+        find . -maxdepth 2 -iname "*.csv"  -print0 | while read -d $'\0' entry
+        do
+          CSVDIR=$(dirname "$entry")
+          CSVGIT=$(basename "$entry")
+    
+          #echo "$CSVDIR"
+          #echo "$CSVGIT"
+          #colordiff "$entry" "$CSVDIR\source\$CSVGIT"
+          
+          echo "[+] $entry"|less &&\
+          colordiff -s "$entry" "$CSVDIR/_source/$CSVGIT"
         done
