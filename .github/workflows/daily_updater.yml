@@ -1,8 +1,8 @@
 name: Daily updater
 
-on: [push]
-  #schedule:
-    #- cron:  '10 03 * * *'
+on:
+  schedule:
+    - cron:  '10 03 * * *'
 
 permissions:
   contents: write
@@ -54,5 +54,4 @@ jobs:
           echo "[+] $entry"|less &&\
           colordiff -s "$entry" "$CSVDIR/_source/$CSVGIT"
           echo "----------------"
-          echo -e '\n'
         done
