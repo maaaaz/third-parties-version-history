@@ -21,6 +21,7 @@ jobs:
 
     - name: Install dependencies
       run: |
+        apt update && apt install colordiff -y
         python -m pip install --upgrade pip
         pip install -r $GITHUB_WORKSPACE/python-scripts-requirements.txt
 
