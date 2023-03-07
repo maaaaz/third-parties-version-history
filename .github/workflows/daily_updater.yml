@@ -43,6 +43,7 @@ jobs:
         done
         
     - name: Checking new versions
+      continue-on-error: true
       run: |
         cd $GITHUB_WORKSPACE
         
