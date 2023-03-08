@@ -43,7 +43,6 @@ jobs:
         done
         
     - name: Checking new versions
-      continue-on-error: true
       run: |
         cd $GITHUB_WORKSPACE
         
@@ -53,6 +52,6 @@ jobs:
           CSVGIT=$(basename "$entry")
          
           echo "[+] $entry"|less &&\
-          colordiff -s "$entry" "$CSVDIR/_source/$CSVGIT"
+          colordiff -s "$entry" "$CSVDIR/_source/$CSVGIT" || true
           echo "----------------"
         done
