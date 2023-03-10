@@ -51,7 +51,17 @@ jobs:
           CSVDIR=$(dirname "$entry")
           CSVGIT=$(basename "$entry")
          
-          echo "[+] $entry"|less &&\
-          colordiff -s "$entry" "$CSVDIR/_source/$CSVGIT" || true
+          echo "[+] $entry"
+          mv -f "$CSVDIR/_source/$CSVGIT" "$entry"
+          
+          #echo "[+] $entry"|less &&\
+          #colordiff -s "$entry" "$CSVDIR/_source/$CSVGIT" || true
+          
           echo "----------------"
         done
+        git config user.name updating-bot
+        git config user.email github-actions@github.com
+        git pull
+        git add -A
+        git commit -m "updating bot - $(date --date="yesterday" '+%Y/%m/%d')"
+        git push
