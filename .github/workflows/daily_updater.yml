@@ -62,6 +62,5 @@ jobs:
         git config user.name updating-bot
         git config user.email github-actions@github.com
         git pull
-        git add -A
-        git commit -m "updating bot - $(date --date="yesterday" '+%Y/%m/%d')"
+        git commit -a -m "updating bot - $(date --date="yesterday" '+%Y/%m/%d')"
         git push
