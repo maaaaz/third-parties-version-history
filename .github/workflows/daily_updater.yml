@@ -1,8 +1,8 @@
 name: Daily updater
 
-on: [push]
-  #schedule:
-    #- cron:  '10 03 * * *'
+on:
+  schedule:
+    - cron:  '10 03 * * *'
 
 permissions:
   contents: write
@@ -54,11 +54,12 @@ jobs:
           echo "[+] $entry"
           mv -f "$CSVDIR/_source/$CSVGIT" "$entry"
           
+          # old method was only to show the difference
           #echo "[+] $entry"|less &&\
           #colordiff -s "$entry" "$CSVDIR/_source/$CSVGIT" || true
-          
           echo "----------------"
         done
+        
         git config user.name updating-bot
         git config user.email github-actions@github.com
         git pull
