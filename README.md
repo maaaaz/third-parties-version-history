@@ -37,6 +37,7 @@ Third-party tools currently listed here
 
 Changelog
 ---------
+* version 1.8 - 2023-03-11: Daily auto-update with Github Actions
 * version 1.7 - 2020-07-25: Apache HTTP Server added
 * version 1.6 - 2020-05-21: Microsoft Edge Chromium, Exchange Server and SQL Server added
 * version 1.5 - 2020-04-10: Oracle VirtualBox and VMWare Workstation added
