@@ -43,6 +43,9 @@ parser.add_argument('-m', '--mode', help="Mode to choose: check against a previo
 parser.add_argument('-p', '--previous-file', help='Path to previous file to take as a reference (default ../%s.csv)' % TARGET, default=path.abspath(path.join(os.getcwd(), '..', './%s.csv' % TARGET)))
 parser.add_argument('-o', '--output-file', help='Output csv file (default ./%s.csv)' % TARGET, default=path.abspath(path.join(os.getcwd(), './%s.csv' % TARGET)))
 
+def remove_control_chars(content):
+    return re.sub(u'[^\u0020-\uD7FF\u0009\u000A\u000D\uE000-\uFFFD\U00010000-\U0010FFFF]+', '', content)
+
 def from_clamav():
     urls = ['https://www.clamav.net/downloads', 'https://www.clamav.net/previous_stable_releases']
     
@@ -69,7 +72,7 @@ def from_clamav():
                 yield release, element
 
 def from_chocolatey():
-    root = fromstring(requests.get('https://chocolatey.org/packages/clamav').content)
+    root = fromstring(remove_control_chars(requests.get('https://chocolatey.org/packages/clamav').content.decode('utf-8')))
     trs = root.findall('.//tr')
     p_version = re.compile(r'(?P<version>\d{1,2}\..*)', re.IGNORECASE)
     
