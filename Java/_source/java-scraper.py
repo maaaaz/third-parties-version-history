@@ -34,7 +34,7 @@ import pandas as pd
 import numpy as np
 
 # Globals
-VERSION = '1.3'
+VERSION = '1.4'
 TARGET = 'java'
 
 # Options definition
