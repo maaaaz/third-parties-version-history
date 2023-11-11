@@ -39,7 +39,7 @@ TARGET = 'java'
 
 # Options definition
 parser = argparse.ArgumentParser(description="version: " + VERSION)
-parser.add_argument('-m', '--mode', help="Mode to choose: check against a previous provided file ('previous'), or 'standalone' scrape (default 'update')", choices = ['previous', 'standalone'], type = str.lower, default = 'previous')
+parser.add_argument('-m', '--mode', help="Mode to choose: check against a previous provided file ('previous'), or 'standalone' scrape (default 'previous')", choices = ['previous', 'standalone'], type = str.lower, default = 'previous')
 parser.add_argument('-p', '--previous-file', help='Path to previous file to take as a reference (default ../%s.csv)' % TARGET, default=path.abspath(path.join(os.getcwd(), '..', './%s.csv' % TARGET)))
 parser.add_argument('-o', '--output-file', help='Output csv file (default ./%s.csv)' % TARGET, default=path.abspath(path.join(os.getcwd(), './%s.csv' % TARGET)))
 
@@ -65,7 +65,7 @@ def from_wikipedia():
         java_entry = p_java_9_plus.search(release)
         if java_entry and not "+" in java_entry.group('version_minor').strip():
             java = {}
-            version_full = "1.%s.%s" % (java_entry.group('version_major').strip(), java_entry.group('version_minor').strip().replace('.','_'))
+            version_full = "1.%s.%s" % (java_entry.group('version_major').strip(), java_entry.group('version_minor').strip().replace('.','_', 1))
             java['version_major'] = java_entry.group('version_major')
             java['date'] = date.strip()
             yield version_full, java
@@ -102,6 +102,7 @@ def scrape_and_merge(sources, results):
     for name, source in sources:
         count = 0
         for version, item in source:
+            #print(version, source)
             if version not in results['version_full'].values:
                 results.loc[len(results)] = [version, item['version_major'], item['date']]
                 count = count + 1
