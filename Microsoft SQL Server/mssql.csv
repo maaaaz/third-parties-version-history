@@ -1078,6 +1078,7 @@
 "16.0.1000.6";"Microsoft SQL Server 2022 RTM";"2022-11-16"
 "16.0.1050.5";"Security update for SQL Server 2022 GDR: February 14, 2023";"2023-02-14"
 "16.0.1105.1";"Security update for SQL Server 2022 GDR: October 10, 2023";"2023-10-10"
+"16.0.1110.1";"Security update for SQL Server 2022 GDR: January 9, 2024";"2024-01-09"
 "16.0.4003.1";"Cumulative update 1 (CU1) for SQL Server 2022";"2023-02-16"
 "16.0.4015.1";"Cumulative update 2 (CU2) for SQL Server 2022";"2023-03-15"
 "16.0.4025.1";"Cumulative update 3 (CU3) for SQL Server 2022";"2023-04-13"
@@ -1089,3 +1090,4 @@
 "16.0.4080.1";"Security update for SQL Server 2022 CU8: October 10, 2023";"2023-10-10"
 "16.0.4085.2";"5030731 Cumulative update 9 (CU9) for SQL Server 2022";"2023-10-12"
 "16.0.4095.4";"5031778 Cumulative update 10 (CU10) for SQL Server 2022";"2023-11-16"
+"16.0.4100.1";"Security update for SQL Server 2022 CU10: January 9, 2024";"2024-01-09"
