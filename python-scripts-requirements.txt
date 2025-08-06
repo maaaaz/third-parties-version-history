@@ -5,3 +5,4 @@ lxml
 looseversion
 PyPDF2
 pandas
+setuptools
