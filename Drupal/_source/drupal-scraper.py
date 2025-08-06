@@ -54,7 +54,7 @@ def from_drupal_old_releases():
     url_old_release = 'https://www.drupal.org/docs/8/understanding-drupal-version-numbers/drupal-release-history'
     root = fromstring(requests.get(url_old_release).content)
     trs = root.findall('.//p')
-    p_release_and_date = re.compile(r'Drupal (?P<version>\d{1,2}\..*), (?P<date>.*)$', re.IGNORECASE)
+    p_release_and_date = re.compile(r'Drupal (?P<version>\d{1,2}\..*), (?P<date>[\d]{4}-[\d]{2}-[\d]{2})$', re.IGNORECASE)
     for entry in trs:
         date = entry.xpath('string(td[2])').strip()
         release = entry.xpath('string(td[1])').strip()
