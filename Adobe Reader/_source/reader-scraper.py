@@ -34,7 +34,7 @@ import pandas as pd
 import numpy as np
 
 # Globals
-VERSION = '1.2'
+VERSION = '1.3'
 TARGET = 'reader'
 
 # Options definition
@@ -46,27 +46,36 @@ parser.add_argument('-o', '--output-file', help='Output csv file (default ./%s.c
     
 def from_adobe():
     root = fromstring(requests.get('https://helpx.adobe.com/acrobat/release-note/release-notes-acrobat-reader.html').content)
-    trs = root.findall('.//tbody/tr')
+    trs = root.xpath(".//span[@class='std std-ref']/text()")
     p_version = re.compile(r'(?P<version>\d{2}\.[0-9.]*)', re.IGNORECASE)
     
     for entry in trs:
-        release = entry.xpath('string(td[2])')
-        date = entry.xpath('string(td[1])').strip()
+        version_list = []
         
-        version_entry = p_version.search(release)
-        if version_entry and date:
-            release = version_entry.group('version')
+        if 'update, ' in entry:
+            first_part, second_part = entry.split('update, ', maxsplit=1)
             
             reader = {}
-            for fmt in ('%b %d, %Y', '%b %d,%Y', '%B %d, %Y', '%B %d,%Y', '%b. %d, %Y', '%b. %d,%Y'):
-                try:
-                    datetime_obj = datetime.datetime.strptime(date, fmt)
-                except ValueError:
-                    pass
+            try:
+                reader['date'] = datetime.datetime.strptime(second_part, "%b %d, %Y").date().isoformat()
+            except ValueError:
+                pass
+            
+            if reader:
+                if ',' in first_part:
+                    for elem in first_part.split(', ', maxsplit=1):
+                        version_entry = p_version.search(elem)
+                        if version_entry:
+                            version_list.append(version_entry.group('version'))
                 
-            reader['date'] = datetime_obj.date().isoformat()
-        
-            yield release, reader
+                else:
+                    version_entry = p_version.search(first_part)
+                    if version_entry:
+                        version_list.append(version_entry.group('version'))
+                    
+                for version in version_list:
+                    yield version, reader
+    
 
 def from_chocolatey():
     root = fromstring(requests.get('https://chocolatey.org/packages/adobereader-update').content)
