@@ -23,7 +23,8 @@ jobs:
 
     - name: Install dependencies
       run: |
-        sudo apt update && sudo apt install colordiff -y
+        APT_PARAMS='sudo apt -y -qq -o=Dpkg::Use-Pty=0'
+        $APT_PARAMS update && $APT_PARAMS install colordiff -y
         python -m pip install --upgrade pip
         pip install -r $GITHUB_WORKSPACE/python-scripts-requirements.txt
 
