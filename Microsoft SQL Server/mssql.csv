@@ -1218,6 +1218,7 @@
 "16.0.4252.3";"Security update for SQL Server 2022 CU24: May 12, 2026";"2026-05-12"
 "16.0.4255.1";"5081477 Cumulative update 25 (CU25) for SQL Server 2022";"2026-05-20"
 "16.0.4262.2";"Security update for SQL Server 2022 CU25: July 14, 2026";"2026-07-14"
+"16.0.4265.3";"Cumulative update 26 (CU26) for SQL Server 2022";"2026-07-16"
 "17.0.17.0";"Microsoft SQL Server 2025 Community Technology Preview 1.0 (CTP 1.0)";"2024-11-19"
 "17.0.600.9";"Microsoft SQL Server 2025 Community Technology Preview 1.5 (CTP 1.5)";"2025-04-10"
 "17.0.700.9";"Microsoft SQL Server 2025 Public Preview (CTP 2.0)";"2025-05-19"
@@ -1241,3 +1242,4 @@
 "17.0.4045.5";"5084896 Cumulative update 5 (CU5) for SQL Server 2025";"2026-05-20"
 "17.0.4055.5";"5093421 Cumulative update 6 (CU6) for SQL Server 2025";"2026-06-17"
 "17.0.4060.2";"Security update for SQL Server 2025 CU6: July 14, 2026";"2026-07-14"
+"17.0.4065.4";"Cumulative update 7 (CU7) for SQL Server 2025";"2026-07-16"
