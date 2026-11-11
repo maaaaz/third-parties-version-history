@@ -41,6 +41,7 @@
 "8.01.0278.002";"8.1.278.2";"Update Rollup 2 for Exchange Server 2007 SP1";"2008-05-09"
 "8.01.0291.002";"8.1.291.2";"Update Rollup 3 for Exchange Server 2007 SP1";"2008-07-08"
 "8.01.0311.003";"8.1.311.3";"Update Rollup 4 for Exchange Server 2007 SP1";"2008-10-07"
+"8.01.0336.001";"8.1.336.1";"Update Rollup 5 for Exchange Server 2007 SP1";"2008-11-20"
 "8.01.0336.01";"8.1.336.1";"Update Rollup 5 for Exchange Server 2007 SP1";"2008-11-20"
 "8.01.0340.001";"8.1.340.1";"Update Rollup 6 for Exchange Server 2007 SP1";"2009-02-10"
 "8.01.0359.002";"8.1.359.2";"Update Rollup 7 for Exchange Server 2007 SP1";"2009-03-18"
@@ -478,3 +479,4 @@
 "15.02.2562.049";"15.2.2562.49";"Exchange Server SE RTM Sep26SU";"2026-09-08"
 "15.02.2562.053";"15.2.2562.53";"Exchange Server SE RTM Sep26SUv2";"2026-10-02"
 "15.02.2562.056";"15.2.2562.56";"Exchange Server SE RTM Oct26SU";"2026-10-13"
+"15.02.2562.057";"15.2.2562.57";"Exchange Server SE RTM Nov26SU";"2026-11-10"
